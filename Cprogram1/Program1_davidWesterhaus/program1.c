@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-char* read_file(){
+float* read_file(){
 	FILE *file_ptr;
 	float numbers_array[12];
 	char line[100];
@@ -20,7 +20,7 @@ char* read_file(){
 	} return numbers_array;
 }
 
-void sales_report(char* numbers, char*months){
+void sales_report(float* numbers, char* months){
 	int i = 0;
 	
 	printf("Monthly Sales Report for 2022:\n");
@@ -32,11 +32,11 @@ void sales_report(char* numbers, char*months){
 	
 }
 
-void sales_sum(char* numbers, char* months){
+void sales_sum(float* numbers, char* months){
 	int i = 0;
-	int max = numbers[0];
+	float max = numbers[0];
 	int max_month;				  
-    int min = numbers[0];
+    float min = numbers[0];
     int min_month;
 	printf("Sales Summary:\n");
 	
@@ -53,16 +53,18 @@ void sales_sum(char* numbers, char* months){
 	float sum = numbers[0]+numbers[1]+numbers[2]+numbers[3]+numbers[4]+numbers[5]+numbers[6]+numbers[7]+numbers[8]+numbers[9]+numbers[10]+numbers[11];
 	float avg = sum/12;	
 	
-	printf("Minimum sales:\t%f\t%s\n", min, months[min_month]);
-	printf("Maximum sales:\t%f\t%s\n", max, months[max_month]);
+	printf("Minimum sales:\t%f\t%c\n", min, months[min_month]);
+	printf("Maximum sales:\t%f\t%c\n", max, months[max_month]);
 	printf("Average sales:\t%f" , avg);
 }
 
 
 int main(){
-	char* numbers = read_file();
+	float* numbers = read_file();
 	char* months[12] = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+	sales_report(numbers, months);
 
+	return 0;
 
 
 }
