@@ -6,15 +6,23 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
 
 float* read_file(){
-	FILE *file_ptr;
+	FILE *file = fopen("input.txt" , "r");
 	float numbers_array[12];
 	char line[100];
 	int i = 0;
-	file_ptr = fopen("input.txt" , "r");
+
+	//check if file has stuff in it
+	if(file == NULL){
+		printf("unable to open file...");
+		exit(1);
+	}
 	
-	while(fgets(line, 100, file_ptr)){
+	//iterate through file
+	while(fgets(line, sizeof(line), file)){
 		numbers_array[i] = atof(line);
 		i++;
 	} return numbers_array;
@@ -63,6 +71,7 @@ int main(){
 	float* numbers = read_file();
 	char* months[12] = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 	sales_report(numbers, months);
+	
 
 	return 0;
 
