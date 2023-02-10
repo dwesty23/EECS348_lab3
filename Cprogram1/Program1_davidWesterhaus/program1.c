@@ -9,38 +9,47 @@
 #include <string.h>
 
 
-float* read_file(){
+float* read_file(int* num_floats){
 	FILE *file = fopen("input.txt" , "r");
-	float numbers_array[12];
-	char line[100];
-	int i = 0;
-
+	
 	//check if file has stuff in it
 	if(file == NULL){
 		printf("unable to open file...");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	
+	float* numbers_array;
+	int i = 0;
+	int capacity = 0;
+	float f;
 	//iterate through file
-	while(fgets(line, sizeof(line), file)){
-		numbers_array[i] = atof(line);
-		i++;
-	} return numbers_array;
+	while(fscanf(file, "%f", &f) == 1){
+		if(i == capacity){
+			capacity = capacity == 0 ? 1 : 2 * capacity;
+			numbers_array = realloc(numbers_array, capacity * sizeof(float));
+		}
+		
+		numbers_array[i++] = f;
+	} 
+	*num_floats = i;
+	return numbers_array;
 }
 
-void sales_report(float* numbers, char* months){
+void sales_report(float* numbers, char** months){
 	int i = 0;
 	
 	printf("Monthly Sales Report for 2022:\n");
-	printf("Month\tSales\n");
-	printf("\n");
+	printf("-------------------------------\n\n");
+	printf("MONTH\tSALES\n");
+
 	for(i=0; i<12; i++){
-		printf("months[i] \t numbers[i]");
+		printf("%s\t", months[i]);
+		printf("$%.2f\n", numbers[i]);
 	}
 	
 }
 
-void sales_sum(float* numbers, char* months){
+void sales_sum(float* numbers, char** months){
 	int i = 0;
 	float max = numbers[0];
 	int max_month;				  
@@ -61,17 +70,69 @@ void sales_sum(float* numbers, char* months){
 	float sum = numbers[0]+numbers[1]+numbers[2]+numbers[3]+numbers[4]+numbers[5]+numbers[6]+numbers[7]+numbers[8]+numbers[9]+numbers[10]+numbers[11];
 	float avg = sum/12;	
 	
-	printf("Minimum sales:\t%f\t%c\n", min, months[min_month]);
-	printf("Maximum sales:\t%f\t%c\n", max, months[max_month]);
-	printf("Average sales:\t%f" , avg);
+	printf("Minimum sales:\t$%.2f\t(%s)\n", min, months[min_month]);
+	printf("Maximum sales:\t$%.2f\t(%s)\n", max, months[max_month]);
+	printf("Average sales:\t$%.2f\n" , avg);
 }
 
+void six_month(float* numbers, char** months){
+	printf("Six-Month Moving Average Report:\n");
+
+	for(int start_month = 0; start_month < 7; start_month++){
+		float sum = numbers[start_month]+numbers[start_month+1]+numbers[start_month+2]+numbers[start_month+3]+numbers[start_month+4]+numbers[start_month+5];
+		float avg = sum/6;
+		//printf("%s\t-\t%s\t$%.2f", months[start_month], months[start_month+5], avg);
+		printf("%s\t - \t%s\t", months[start_month], months[start_month+5]);
+		printf("$%.2f\n", avg);
+	}
+}
+
+void high_to_low(float* numbers, char** months){
+	int i, j;
+	float temp;
+	char* temp_month;
+
+	// sort array
+	for(i=0; i < 12; i++){
+		for(j=i+1; j<12; j++){
+			if(numbers[j] > numbers[i]){
+				temp = numbers[i];
+				temp_month = months[i];
+				numbers[i] = numbers[j];
+				months[i] = months[j];
+				numbers[j] = temp;
+				months[j] = temp_month;
+			}
+		}
+	}
+	
+	//print sorted array
+	printf("\nSales Report (Highest to Lowest):\n");
+	printf("MONTH\tSALES\n");
+	for(i=0; i<sizeof(numbers); i++){
+		printf("%s\t$%.2f\n", months[i], numbers[i]);
+	}
+
+
+
+
+	
+}
 
 int main(){
-	float* numbers = read_file();
+	int float_num = 12;
+	float* numbers = read_file(&float_num);
+	int i;
 	char* months[12] = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 	sales_report(numbers, months);
-	
+	printf("\n");
+	sales_sum(numbers, months);
+	printf("\n");
+	six_month(numbers, months);
+	high_to_low(numbers, months);
+	printf("\n");
+
+
 
 	return 0;
 
