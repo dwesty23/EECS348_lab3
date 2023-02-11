@@ -1,5 +1,5 @@
 /*
- * program1.c
+ * program2.c
  *
  *  Created on: Feb 10, 2023
  *      Author: d643w879
